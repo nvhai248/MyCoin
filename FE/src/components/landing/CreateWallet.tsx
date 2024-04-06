@@ -9,15 +9,20 @@ const CreateWalletCard: React.FC = () => {
 
   return (
     <Card
-      style={{ width: 600, marginTop: 16 }}
+      className="card-layout"
       onClick={() => {
         navigate("/create");
       }}
     >
       <Meta
-        avatar={<FaWallet size={60} />}
+        avatar={<FaWallet size={60} color="#1890ff" />}
         title="Create new Wallet"
-        description="Create new Wallet by Keystore File or Mnemonic Phrase."
+        description={
+          "Create a new wallet securely by generating a Keystore File or Mnemonic Phrase. " +
+          "This option allows you to create a brand-new wallet for storing your assets. " +
+          "You can either download your Keystore File or write down your Mnemonic Phrase " +
+          "for future access and recovery of your wallet."
+        }
       />
     </Card>
   );

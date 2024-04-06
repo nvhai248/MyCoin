@@ -10,15 +10,19 @@ const AccessWalletCard: React.FC = () => {
 
   return (
     <Card
-      style={{ width: 600, marginTop: 16 }}
+      className="card-layout"
       onClick={() => {
         navigate("/access");
       }}
     >
       <Meta
-        avatar={<PiKeyReturnFill size={60} />}
+        avatar={<PiKeyReturnFill size={60} color="#1890ff" />}
         title="Access my Wallet"
-        description="Create new Wallet by Keystore File or Mnemonic Phrase."
+        description={
+          "Access your existing wallet securely using a Keystore File or Mnemonic Phrase. " +
+          "If you already have a wallet created, use this option to import and access it " +
+          "by providing your Keystore File or entering your Mnemonic Phrase."
+        }
       />
     </Card>
   );

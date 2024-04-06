@@ -1,17 +1,16 @@
 import React from "react";
-import { Card } from "antd";
 import CreateWalletCard from "../../components/landing/CreateWallet";
 import AccessWalletCard from "../../components/landing/AccessWallet";
 
 const LandingPage: React.FC = () => {
   return (
-    <>
+    <div className="container">
       <h1>My Wallet</h1>
-      <Card>
+      <div>
         <CreateWalletCard />
         <AccessWalletCard />
-      </Card>
-    </>
+      </div>
+    </div>
   );
 };
 
