@@ -16,7 +16,7 @@ const AccessWalletCard: React.FC = () => {
       }}
     >
       <Meta
-        avatar={<PiKeyReturnFill size={60} color="#1890ff" />}
+        avatar={<PiKeyReturnFill size={60} color="#fba801" />}
         title="Access my Wallet"
         description={
           "Access your existing wallet securely using a Keystore File or Mnemonic Phrase. " +

@@ -5,7 +5,11 @@ import AccessWalletCard from "../../components/landing/AccessWallet";
 const LandingPage: React.FC = () => {
   return (
     <div className="container">
-      <h1>My Wallet</h1>
+      <div>
+        <img src="/horsecoin.png"></img>
+        <h1>MY COIN</h1>
+      </div>
+
       <div>
         <CreateWalletCard />
         <AccessWalletCard />

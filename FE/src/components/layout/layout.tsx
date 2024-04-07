@@ -10,7 +10,7 @@ const bodyStyle = {
   display: "flex",
   justifyContent: "center",
   alignItems: "center",
-  height: "100vh",
+  height: "98vh",
   backgroundColor: "#f5f5f5",
 };
 
