@@ -1,43 +1,48 @@
 import React, { useState, useEffect } from "react";
-import CreateWalletCard from "../../components/create/Keystore";
-import CreateMnemonicPhraseCard from "../../components/create/MnemonicPhrase";
 import { useNavigate } from "react-router-dom";
-import { RiCloseCircleLine } from "react-icons/ri";
+import CloseButton from "../../components/button/CloseButton";
+import CreateByKeystorePage from "./ByKeystore";
+import CreateByMnemonicPhrasePage from "./ByPhrase";
+import ChooseMethodPage from "./ChooseMethod";
+import ReturnButton from "../../components/button/ReturnButton";
 
 const CreatePage: React.FC = () => {
   const [mounted, setMounted] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
     // Set mounted to true to trigger slide animation on mount
     setMounted(true);
   }, []);
-  const navigate = useNavigate();
+
+  // Extract the route hash from window.location
+  const routeHash = window.location.hash.substr(1);
+
+  // Define the component to render based on routeHash
+  let componentToRender;
+
+  switch (routeHash) {
+    case "keystore":
+      componentToRender = <CreateByKeystorePage />;
+      break;
+    case "phrase":
+      componentToRender = <CreateByMnemonicPhrasePage />;
+      break;
+    default:
+      componentToRender = <ChooseMethodPage />;
+      break;
+  }
+
   return (
     <>
-      <ReturnButton navigate={navigate} />
-      <div className={`container ${mounted ? "slide-down" : "slide-up"}`}>
-        <div>
-          <h1>CREATE NEW WALLET</h1>
-        </div>
+      <CloseButton navigate={navigate} />
 
-        <div>
-          <CreateWalletCard />
-          <CreateMnemonicPhraseCard />
-        </div>
+      {window.location.hash.substr(1) !== "" ? <ReturnButton /> : ""}
+      <div className={`container ${mounted ? "slide-down" : "slide-up"}`}>
+        {componentToRender}
       </div>
     </>
   );
 };
-
-const ReturnButton: React.FC<{ navigate: any }> = ({ navigate }) => (
-  <button className="returnLanding">
-    <RiCloseCircleLine
-      size={50}
-      onClick={() => {
-        navigate("/");
-      }}
-    />
-  </button>
-);
 
 export default CreatePage;

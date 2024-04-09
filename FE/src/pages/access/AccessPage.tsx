@@ -1,45 +1,51 @@
 import React, { useState, useEffect } from "react";
-import AccessKeystoreCard from "../../components/access/Keystore";
-import AccessMnemonicPhraseCard from "../../components/access/MnemonicPhrase";
-import AccessPrivateKeyCard from "../../components/access/PrivateKey";
+
 import { useNavigate } from "react-router-dom";
-import { RiCloseCircleLine } from "react-icons/ri";
+import CloseButton from "../../components/button/CloseButton";
+import AccessByKeystorePage from "./ByKeystore";
+import AccessByMnemonicPhrasePage from "./ByPhrase";
+import AccessByPrivateKeyPage from "./ByPrivateKey";
+import ChooseMethodPage from "./ChooseMethod";
+import ReturnButton from "../../components/button/ReturnButton";
 
 const AccessPage: React.FC = () => {
   const [mounted, setMounted] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
     // Set mounted to true to trigger slide animation on mount
     setMounted(true);
   }, []);
-  const navigate = useNavigate();
+
+  // Extract the route hash from window.location
+  const routeHash = window.location.hash.substr(1);
+
+  // Define the component to render based on routeHash
+  let componentToRender;
+
+  switch (routeHash) {
+    case "keystore":
+      componentToRender = <AccessByKeystorePage />;
+      break;
+    case "phrase":
+      componentToRender = <AccessByMnemonicPhrasePage />;
+      break;
+    case "private-key":
+      componentToRender = <AccessByPrivateKeyPage />;
+      break;
+    default:
+      componentToRender = <ChooseMethodPage />;
+      break;
+  }
   return (
     <>
-      <ReturnButton navigate={navigate} />
+      <CloseButton navigate={navigate} />
+      {window.location.hash.substr(1) !== "" ? <ReturnButton /> : ""}
       <div className={`container ${mounted ? "slide-down" : "slide-up"}`}>
-        <div>
-          <h1>ACCESS MY WALLET</h1>
-        </div>
-
-        <div>
-          <AccessKeystoreCard />
-          <AccessMnemonicPhraseCard />
-          <AccessPrivateKeyCard />
-        </div>
+        {componentToRender}
       </div>
     </>
   );
 };
-
-const ReturnButton: React.FC<{ navigate: any }> = ({ navigate }) => (
-  <button className="returnLanding">
-    <RiCloseCircleLine
-      size={50}
-      onClick={() => {
-        navigate("/");
-      }}
-    />
-  </button>
-);
 
 export default AccessPage;

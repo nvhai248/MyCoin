@@ -1,18 +1,15 @@
 import React from "react";
 import { Card } from "antd";
 import { AiOutlineFileDone } from "react-icons/ai";
-import { useNavigate } from "react-router-dom";
 
 const { Meta } = Card;
 
 const AccessMnemonicPhraseCard: React.FC = () => {
-  const navigate = useNavigate();
-
   return (
     <Card
       className="card-layout"
       onClick={() => {
-        navigate("/access");
+        window.location.replace("#phrase");
       }}
     >
       <Meta
