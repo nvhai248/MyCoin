@@ -6,6 +6,7 @@ import Dashboard from "../pages/dashboard/Dashboard";
 import NotFoundPage from "../pages/notFound/NotFoundPage";
 import { MY_ROUTE } from "./const";
 import Layout from "../components/layout/layout";
+import LayoutDashboard from "../components/layout/dashboard";
 
 const router = createBrowserRouter([
   {
@@ -25,7 +26,7 @@ const router = createBrowserRouter([
   },
   {
     path: "/dashboard",
-    element: <Layout />,
+    element: <LayoutDashboard />,
     children: [{ path: MY_ROUTE.DASHBOARD, element: <Dashboard /> }],
   },
   {

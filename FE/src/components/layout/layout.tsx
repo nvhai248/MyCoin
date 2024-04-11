@@ -10,7 +10,7 @@ const bodyStyle = {
   display: "flex",
   justifyContent: "center",
   alignItems: "center",
-  height: "98vh",
+  height: "100vh",
   backgroundColor: "#f5f5f5",
 };
 
@@ -18,11 +18,9 @@ export default function Layout() {
   return (
     <div style={bodyStyle}>
       <LayoutAntDesign>
-        <LayoutAntDesign>
-          <Content>
-            <Outlet />
-          </Content>
-        </LayoutAntDesign>
+        <Content>
+          <Outlet />
+        </Content>
       </LayoutAntDesign>
     </div>
   );

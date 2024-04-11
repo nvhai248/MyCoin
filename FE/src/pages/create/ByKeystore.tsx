@@ -1,6 +1,6 @@
 import { Card } from "antd";
 import React, { useState } from "react";
-import { Button, message, Steps, theme } from "antd";
+import { Button, Steps, theme } from "antd";
 import Step1CreatePassword from "../../components/steps/create-keystore/step1";
 import Step2DownloadFile from "../../components/steps/create-keystore/step2";
 import { useNavigate } from "react-router-dom";
@@ -75,7 +75,7 @@ const CreateByKeystorePage: React.FC = () => {
             {current < steps.length - 1 && (
               <Button
                 style={buttonStyle}
-                disabled={false}
+                disabled={!isEnable}
                 type="primary"
                 onClick={() => next()}
               >
