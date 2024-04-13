@@ -7,6 +7,7 @@ import { CgDetailsMore } from "react-icons/cg";
 import { BiTransferAlt } from "react-icons/bi";
 import DetailWalletModal from "./detailWalletModal";
 import { useState } from "react";
+import LineChartBalanceFluctuations from "../../components/dasboard/chart";
 
 const { Meta } = Card;
 
@@ -21,6 +22,13 @@ const Dashboard = () => {
     setShowDetailModal(false);
   };
 
+  const walletAddress = "adress here";
+  const balance = {
+    mc: 45000,
+    usd: 1000,
+  };
+  const newNW = 1;
+
   return (
     <>
       <Row>
@@ -29,7 +37,7 @@ const Dashboard = () => {
             <Meta
               avatar={<LiaAddressCardSolid size={60} color="#1d2776" />}
               title="Address"
-              description={" Address here. "}
+              description={walletAddress}
             />
             <Button
               onClick={handleShowDetailModal}
@@ -42,7 +50,7 @@ const Dashboard = () => {
             <Meta
               avatar={<MdAccountBalance size={60} color="#1d2776" />}
               title="Balance"
-              description={" 0 MC "}
+              description={`${balance.mc}MC &  $${balance.usd}`}
             />
           </Card>
         </Col>
@@ -51,12 +59,16 @@ const Dashboard = () => {
             <Meta
               avatar={<IoGitNetworkSharp size={60} color="#1d2776" />}
               title="Network"
-              description={" Last block: ?? "}
+              description={` Last block: ${newNW}`}
             />
             <Button icon={<BiTransferAlt />}></Button>
           </Card>
         </Col>
       </Row>
+
+      <h1>Statistical</h1>
+
+      <LineChartBalanceFluctuations />
 
       <DetailWalletModal
         visible={showDetailModal}

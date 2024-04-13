@@ -7,6 +7,7 @@ import { GiBuyCard } from "react-icons/gi";
 import { MdDashboard } from "react-icons/md";
 import { FaMoneyBillTransfer } from "react-icons/fa6";
 import { useNavigate } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 
 const { Sider } = Layout;
 
@@ -35,17 +36,52 @@ const items = [
 
 const SiderDashboard: React.FC = () => {
   const navigate = useNavigate();
+  const location = useLocation();
+
+  const setDefaultKey = () => {
+    const { pathname } = location;
+
+    console.log(pathname);
+
+    switch (pathname) {
+      case "/transfer":
+        return "2";
+        break;
+      case "/history":
+        return "3";
+        break;
+      case "/buy":
+        return "4";
+        break;
+      default:
+        return "1";
+        break;
+    }
+  };
+
+  const clickMenu = (key: string) => {
+    switch (key) {
+      case "2":
+        navigate("/transfer");
+        break;
+      case "3":
+        navigate("/history");
+        break;
+      case "4":
+        navigate("/buy");
+        break;
+      default:
+        navigate("/dashboard");
+        break;
+    }
+  };
+
   return (
     <Sider
       breakpoint="lg"
       collapsedWidth="0"
-      onBreakpoint={(broken) => {
-        console.log(broken);
-      }}
-      onCollapse={(collapsed, type) => {
-        console.log(collapsed, type);
-      }}
       width={"18rem"}
+      style={{ height: "100vh" }}
     >
       <div style={{ display: "flex", flexDirection: "row" }}>
         <img style={{ width: "4rem" }} src="/horsecoin.png"></img>
@@ -57,9 +93,16 @@ const SiderDashboard: React.FC = () => {
       <AvatarDashboard />
 
       <div className="demo-logo-vertical" />
-      <Menu theme="dark" mode="inline" defaultSelectedKeys={["1"]}>
+      <Menu theme="dark" mode="inline" defaultSelectedKeys={[setDefaultKey()]}>
         {items.map((item) => (
-          <Menu.Item key={item.key} icon={item.icon} style={{ height: "3rem" }}>
+          <Menu.Item
+            key={item.key}
+            onClick={() => {
+              clickMenu(item.key);
+            }}
+            icon={item.icon}
+            style={{ height: "3rem" }}
+          >
             {item.label}
           </Menu.Item>
         ))}

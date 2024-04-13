@@ -7,6 +7,9 @@ import NotFoundPage from "../pages/notFound/NotFoundPage";
 import { MY_ROUTE } from "./const";
 import Layout from "../components/layout/layout";
 import LayoutDashboard from "../components/layout/dashboard";
+import TransferPage from "../pages/transfer/Transfer";
+import HistoryPage from "../pages/history/History";
+import BuyPage from "../pages/buy/Buy";
 
 const router = createBrowserRouter([
   {
@@ -28,6 +31,21 @@ const router = createBrowserRouter([
     path: "/dashboard",
     element: <LayoutDashboard />,
     children: [{ path: MY_ROUTE.DASHBOARD, element: <Dashboard /> }],
+  },
+  {
+    path: "/transfer",
+    element: <LayoutDashboard />,
+    children: [{ path: MY_ROUTE.TRANSFER, element: <TransferPage /> }],
+  },
+  {
+    path: "/history",
+    element: <LayoutDashboard />,
+    children: [{ path: MY_ROUTE.HISTORY, element: <HistoryPage /> }],
+  },
+  {
+    path: "/buy",
+    element: <LayoutDashboard />,
+    children: [{ path: MY_ROUTE.BUY, element: <BuyPage /> }],
   },
   {
     path: "/*",

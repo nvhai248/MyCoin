@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import { Modal, Collapse, Button, notification } from "antd";
 import { CopyOutlined } from "@ant-design/icons";
 
@@ -32,6 +32,7 @@ const DetailWalletModal: React.FC<DetailWalletModalProps> = ({
     >
       <Collapse
         size="middle"
+        style={{ marginBottom: "10px" }}
         items={[
           {
             key: "1",
