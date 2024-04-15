@@ -3,7 +3,6 @@ import { WalletService } from './wallet.service';
 import { ResponseData } from 'src/global/globalClass';
 import { HttpStatus } from 'src/global/globalEnum';
 import { CreateWallet } from 'src/dto/wallet.dto';
-import { Wallet } from 'src/models/wallet.model';
 import { ErrorResponse } from 'src/utils/errorHandle';
 
 @Controller('wallets')
@@ -25,14 +24,14 @@ export class WalletController {
   }
 
   @Post()
-  createWallet(@Body() createWallet: CreateWallet): ResponseData<Wallet> {
+  async createWallet(
+    @Body() createWallet: CreateWallet,
+  ): Promise<ResponseData<any>> {
     try {
-      return new ResponseData(
-        this.walletService.createNewWallet(createWallet.password),
-        HttpStatus.SUCCESS,
-        'OK',
-        null,
+      const result = await this.walletService.createNewWallet(
+        createWallet.password,
       );
+      return new ResponseData(result, HttpStatus.SUCCESS, 'OK', null);
     } catch (error) {
       return ErrorResponse(error);
     }

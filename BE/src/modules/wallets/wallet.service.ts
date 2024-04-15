@@ -1,10 +1,13 @@
 import { Injectable } from '@nestjs/common';
-import { ResponseData } from 'src/global/globalClass';
-import { HttpMessage, HttpStatus } from 'src/global/globalEnum';
-import { Wallet } from 'src/models/wallet.model';
+import { InjectModel } from '@nestjs/mongoose';
+import { Model } from 'mongoose';
+import { Wallet } from 'src/schemas/wallet.schema';
+import { CreateWalletAndSaveKeystoreFile } from 'src/utils/wallet';
 
 @Injectable()
 export class WalletService {
+  constructor(@InjectModel(Wallet.name) private walletModel: Model<Wallet>) {}
+
   getNoti(): string {
     try {
       return 'wallet';
@@ -13,9 +16,21 @@ export class WalletService {
     }
   }
 
-  createNewWallet(password: string): Wallet {
+  async createNewWallet(password: string): Promise<Wallet> {
     try {
-      return new Wallet({ password: password });
+      const { address, keystoreFilePath, privateKey } =
+        await CreateWalletAndSaveKeystoreFile(password);
+
+      const result = await this.walletModel.create({
+        address: address,
+        password: password,
+        keystoreFilePath: keystoreFilePath,
+        privateKey: privateKey,
+        amountMC: 0,
+        amountUSD: 10000,
+      });
+
+      return result;
     } catch (error) {
       throw error;
     }
