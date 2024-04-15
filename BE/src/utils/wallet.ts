@@ -35,12 +35,14 @@ export async function CreateWalletAndSaveKeystoreFile(
     const bucketName = S3_CONFIG.bucketName;
     const key = `${address}.json`;
 
+    const encryptedJsonBuffer = Buffer.from(encryptedJson);
+
     // Upload keystore JSON file to AWS S3
     await s3
       .upload({
         Bucket: bucketName,
         Key: key,
-        Body: JSON.stringify(encryptedJson),
+        Body: encryptedJsonBuffer,
       })
       .promise();
 
@@ -56,17 +58,15 @@ export async function CreateWalletAndSaveKeystoreFile(
     throw new InternalServerError("Can't create keystore file", error.message);
   }
 }
+
 export async function VerifyWalletFromKeystoreContent(
   keystoreContent: string,
-  password: string,
+  password: any,
 ): Promise<WalletData> {
   try {
-    // Parse keystore JSON from the provided content
-    const encryptedJson = JSON.parse(keystoreContent);
-
     // Decrypt the keystore using the password
     const wallet = await Wallet.fromEncryptedJson(
-      JSON.stringify(encryptedJson),
+      JSON.stringify(keystoreContent),
       password,
     );
 

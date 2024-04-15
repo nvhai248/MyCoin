@@ -1,11 +1,48 @@
 import React from "react";
-import { Col, Row, Button } from "antd";
+import { Col, Row, message } from "antd";
 
 interface Step1Props {
-  isNext: () => void;
+  nextAndReturnKeystore: (content: any) => void;
 }
 
-const Step1AccessByKeystore: React.FC<Step1Props> = ({ isNext }) => {
+const Step1AccessByKeystore: React.FC<Step1Props> = ({
+  nextAndReturnKeystore,
+}) => {
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      try {
+        if (file.type === "application/json") {
+          const fileContents = await readFileContents(file);
+          console.log(JSON.parse(fileContents));
+          nextAndReturnKeystore(JSON.parse(fileContents));
+        } else {
+          message.error("Please select a JSON file.");
+        }
+      } catch (error) {
+        console.error("Error reading file:", error);
+      }
+    }
+  };
+
+  const readFileContents = (file: File): Promise<string> => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        if (event.target?.result) {
+          const contents = event.target.result as string;
+          resolve(contents);
+        } else {
+          reject(new Error("Failed to read file contents."));
+        }
+      };
+      reader.onerror = (error) => {
+        reject(error);
+      };
+      reader.readAsText(file);
+    });
+  };
+
   return (
     <>
       <h3>STEP 1:</h3>
@@ -29,19 +66,40 @@ const Step1AccessByKeystore: React.FC<Step1Props> = ({ isNext }) => {
               color: "black",
             }}
           >
-            Please select keystore file that unlocks your wallet.
+            Please select the keystore file that unlocks your wallet.
           </h4>
-          <Button
-            style={{ width: "80%", height: "3rem", marginLeft: "10%" }}
-            onClick={() => isNext()}
-          >
-            Select file
-          </Button>
+
+          <input
+            type="file"
+            onChange={handleFileUpload}
+            style={{
+              display: "none",
+            }}
+            id="upload"
+          />
+          <label htmlFor="upload">
+            <div
+              style={{
+                marginLeft: "1rem",
+                width: "10rem",
+                height: "3rem",
+                backgroundColor: "#1890ff",
+                color: "white",
+                borderRadius: "5px",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                cursor: "pointer",
+              }}
+            >
+              Select File
+            </div>
+          </label>
         </Col>
         <Col span={12}>
           <img
             src="/keystorefile.png"
-            alt="Done"
+            alt="Keystore File"
             style={{
               width: "17rem",
               marginTop: "1rem",

@@ -1,18 +1,55 @@
-import { Card } from "antd";
+import { Card, notification } from "antd";
 import React, { useState } from "react";
 import { Steps, theme, Button } from "antd";
 import { useNavigate } from "react-router-dom";
 import Step1AccessByKeystore from "../../components/steps/access-keystore/step1";
 import Step2EnterPassword from "../../components/steps/access-keystore/step2";
+import axiosInstance from "../../configs/axios.config";
 
 const CreateByKeystorePage: React.FC = () => {
-  const navigate = useNavigate();
-
   const { token } = theme.useToken();
-  const [current, setCurrent] = useState(0);
 
-  const next = () => {
+  const navigate = useNavigate();
+  const [current, setCurrent] = useState(0);
+  const [disabledNext, setDisabledNext] = useState<boolean>(true);
+  const [keystoreFileContent, setKeystoreFileContent] = useState<string>("");
+  const [password, setPassword] = useState<string>("");
+
+  const nextAndReturnKeystore = (content: any) => {
+    setKeystoreFileContent(content);
     setCurrent(current + 1);
+  };
+
+  const enableNextAndReturnPassword = (passwordStr: string) => {
+    setPassword(passwordStr);
+    setDisabledNext(passwordStr.length < 8); // Disable next button if password length is less than 8
+  };
+
+  const handleNext = async () => {
+    try {
+      const bodyRequest = {
+        password: password,
+        keystoreFileContent: keystoreFileContent,
+      };
+
+      console.log(bodyRequest);
+
+      let result = await axiosInstance.post("/wallets/access", bodyRequest);
+
+      if (result.data.statusCode !== 200) {
+        notification.error({
+          message: "Access Wallet Failed",
+          description: "Wrong keystore file or password!",
+        });
+      }
+      console.log(result.data);
+    } catch (error) {
+      notification.error({
+        message: "Access Wallet Failed",
+        description: "Something went wrong!",
+      });
+      console.log(error);
+    }
   };
 
   const prev = () => {
@@ -23,12 +60,18 @@ const CreateByKeystorePage: React.FC = () => {
     {
       title: "Step 1",
       subTitle: "Select file",
-      content: <Step1AccessByKeystore isNext={next} />,
+      content: (
+        <Step1AccessByKeystore nextAndReturnKeystore={nextAndReturnKeystore} />
+      ),
     },
     {
       title: "Step 2",
       subTitle: "Enter Password",
-      content: <Step2EnterPassword />,
+      content: (
+        <Step2EnterPassword
+          enableNextAndReturnPassword={enableNextAndReturnPassword}
+        />
+      ),
     },
   ];
 
@@ -57,11 +100,12 @@ const CreateByKeystorePage: React.FC = () => {
           <div style={contentStyle}>{steps[current].content}</div>
         </div>
         <div style={{ marginTop: "2rem" }}>
-          {current === steps.length - 1 && (
+          {current === 1 && (
             <Button
+              disabled={disabledNext}
               type="primary"
               style={{ width: "6rem", height: "3rem" }}
-              onClick={() => navigate("/dashboard")}
+              onClick={handleNext}
             >
               Next
             </Button>

@@ -40,10 +40,7 @@ export class WalletService {
     }
   }
 
-  async accessWallet(
-    password: string,
-    keystoreFileContent: string,
-  ): Promise<any> {
+  async accessWallet(password: string, keystoreFileContent: any): Promise<any> {
     try {
       const { address, privateKey } = await VerifyWalletFromKeystoreContent(
         keystoreFileContent,

@@ -1,11 +1,23 @@
 import React from "react";
 import { Form, Input } from "antd";
 
-const Step2EnterPassword: React.FC = () => {
+interface Step2Props {
+  enableNextAndReturnPassword: (passwordStr: string) => void;
+}
+
+const Step2EnterPassword: React.FC<Step2Props> = ({
+  enableNextAndReturnPassword,
+}) => {
   const inputStyle: React.CSSProperties = {
     height: 70,
     fontSize: 20,
   };
+
+  const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newPassword = e.target.value;
+    enableNextAndReturnPassword(newPassword); // Notify parent component about password change
+  };
+
   return (
     <>
       <h3>STEP 2:</h3>
@@ -41,7 +53,7 @@ const Step2EnterPassword: React.FC = () => {
           <Input.Password
             placeholder="Enter password..."
             style={inputStyle}
-            onChange={() => {}}
+            onChange={handlePasswordChange}
           />
         </Form.Item>
       </Form>

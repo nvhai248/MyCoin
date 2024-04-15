@@ -4,5 +4,5 @@ export class CreateWallet {
 
 export class AccessWalletDto {
   keystoreFileContent?: string;
-  password?: string;
+  password?: any;
 }
