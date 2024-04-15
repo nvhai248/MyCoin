@@ -1,6 +1,6 @@
 import { Wallet } from 'ethers';
 import { S3 } from 'aws-sdk';
-import { InternalServerError } from 'src/global/errorClass';
+import { InternalServerError, UnauthorizeError } from 'src/global/errorClass';
 import { S3_CONFIG } from 'src/configs/s3.config';
 
 interface WalletData {
@@ -54,5 +54,43 @@ export async function CreateWalletAndSaveKeystoreFile(
     };
   } catch (error) {
     throw new InternalServerError("Can't create keystore file", error.message);
+  }
+}
+export async function VerifyWalletFromKeystoreContent(
+  keystoreContent: string,
+  password: string,
+): Promise<WalletData> {
+  try {
+    // Parse keystore JSON from the provided content
+    const encryptedJson = JSON.parse(keystoreContent);
+
+    // Decrypt the keystore using the password
+    const wallet = await Wallet.fromEncryptedJson(
+      JSON.stringify(encryptedJson),
+      password,
+    );
+
+    // Ethereum address
+    const address = wallet.address;
+
+    // Extract private key (optional)
+    const privateKey = wallet.privateKey;
+
+    return {
+      address: address,
+      privateKey: privateKey,
+      keystoreFilePath: '',
+    };
+  } catch (error) {
+    if (error.code === 'IncorrectPassword') {
+      throw new UnauthorizeError(
+        'Incorrect password or keystore file',
+        error.message,
+      );
+    }
+    throw new InternalServerError(
+      'Failed to verify wallet from keystore content',
+      error.message,
+    );
   }
 }

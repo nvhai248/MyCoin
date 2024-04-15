@@ -2,7 +2,7 @@ import { Body, Controller, Get, Post } from '@nestjs/common';
 import { WalletService } from './wallet.service';
 import { ResponseData } from 'src/global/globalClass';
 import { HttpStatus } from 'src/global/globalEnum';
-import { CreateWallet } from 'src/dto/wallet.dto';
+import { AccessWalletDto, CreateWallet } from 'src/dto/wallet.dto';
 import { ErrorResponse } from 'src/utils/errorHandle';
 
 @Controller('wallets')
@@ -30,6 +30,21 @@ export class WalletController {
     try {
       const result = await this.walletService.createNewWallet(
         createWallet.password,
+      );
+      return new ResponseData(result, HttpStatus.SUCCESS, 'OK', null);
+    } catch (error) {
+      return ErrorResponse(error);
+    }
+  }
+
+  @Post('/access')
+  async accessWallet(
+    @Body() accessWallet: AccessWalletDto,
+  ): Promise<ResponseData<any>> {
+    try {
+      const result = await this.walletService.accessWallet(
+        accessWallet.password,
+        accessWallet.keystoreFileContent,
       );
       return new ResponseData(result, HttpStatus.SUCCESS, 'OK', null);
     } catch (error) {
