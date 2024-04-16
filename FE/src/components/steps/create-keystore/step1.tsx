@@ -3,9 +3,13 @@ import { Form, Input } from "antd";
 
 interface FormProps {
   isEnable: (value: boolean) => void;
+  providePassword: (value: string) => void;
 }
 
-const Step1CreatePassword: React.FC<FormProps> = ({ isEnable }) => {
+const Step1CreatePassword: React.FC<FormProps> = ({
+  isEnable,
+  providePassword,
+}) => {
   const [password, setPassword] = useState<string>("");
   const [confirmPassword, setConfirmPassword] = useState<string>("");
 
@@ -18,7 +22,13 @@ const Step1CreatePassword: React.FC<FormProps> = ({ isEnable }) => {
     if (e.target.value.length >= 8) {
       const newPassword = e.target.value;
       setPassword(e.target.value);
-      isEnable(newPassword === confirmPassword && newPassword.length >= 8);
+      if (newPassword === confirmPassword && newPassword.length >= 8) {
+        isEnable(true);
+        providePassword(password);
+        return;
+      }
+
+      isEnable(false);
     }
   };
 
@@ -27,9 +37,14 @@ const Step1CreatePassword: React.FC<FormProps> = ({ isEnable }) => {
   ) => {
     const newConfirmPassword = e.target.value;
     setConfirmPassword(e.target.value);
-    isEnable(
-      password === newConfirmPassword && newConfirmPassword.length >= 8
-    );
+
+    if (password === newConfirmPassword && newConfirmPassword.length >= 8) {
+      isEnable(true);
+      providePassword(password);
+      return;
+    }
+
+    isEnable(false);
   };
   return (
     <>

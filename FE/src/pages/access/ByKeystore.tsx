@@ -5,10 +5,10 @@ import { useNavigate } from "react-router-dom";
 import Step1AccessByKeystore from "../../components/steps/access-keystore/step1";
 import Step2EnterPassword from "../../components/steps/access-keystore/step2";
 import axiosInstance from "../../configs/axios.config";
-
+import { useAuth } from "../../provider/authContext";
 const CreateByKeystorePage: React.FC = () => {
   const { token } = theme.useToken();
-
+  const { setWallet } = useAuth();
   const navigate = useNavigate();
   const [current, setCurrent] = useState(0);
   const [disabledNext, setDisabledNext] = useState<boolean>(true);
@@ -32,8 +32,6 @@ const CreateByKeystorePage: React.FC = () => {
         keystoreFileContent: keystoreFileContent,
       };
 
-      console.log(bodyRequest);
-
       let result = await axiosInstance.post("/wallets/access", bodyRequest);
 
       if (result.data.statusCode !== 200) {
@@ -41,8 +39,12 @@ const CreateByKeystorePage: React.FC = () => {
           message: "Access Wallet Failed",
           description: "Wrong keystore file or password!",
         });
+
+        return;
       }
-      console.log(result.data);
+
+      setWallet(result.data.data);
+      navigate("/dashboard");
     } catch (error) {
       notification.error({
         message: "Access Wallet Failed",
