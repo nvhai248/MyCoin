@@ -1,22 +1,72 @@
-import { Controller, Get } from '@nestjs/common';
+import { Controller, Get, Body, Post } from '@nestjs/common';
 import { TransactionService } from './transaction.service';
 import { ResponseData } from 'src/global/globalClass';
 import { HttpStatus } from 'src/global/globalEnum';
 import { ErrorResponse } from 'src/utils/errorHandle';
+import {
+  BuyMCFromSystemDto,
+  HistoryDto,
+  RechargeDto,
+  TransactionCreateDto,
+} from 'src/dto/transaction.dto';
 
 @Controller('transactions')
 export class TransactionController {
   constructor(private readonly transactionService: TransactionService) {}
 
   @Get()
-  getNoti(): ResponseData<string> {
+  async getHistory(@Body() getHistory: HistoryDto): Promise<ResponseData<any>> {
     try {
-      return new ResponseData(
-        this.transactionService.GetNoti(),
-        HttpStatus.SUCCESS,
-        'OK',
-        null,
+      const result = await this.transactionService.getHistory(
+        getHistory.address,
       );
+      return new ResponseData(result, HttpStatus.SUCCESS, 'OK', null);
+    } catch (error) {
+      return ErrorResponse(error);
+    }
+  }
+
+  @Post()
+  async createNewTransaction(
+    @Body() transactionCreated: TransactionCreateDto,
+  ): Promise<ResponseData<any>> {
+    try {
+      const result = await this.transactionService.createNewTransaction(
+        transactionCreated.from,
+        transactionCreated.to,
+        transactionCreated.amount,
+      );
+      return new ResponseData(result, HttpStatus.SUCCESS, 'OK', null);
+    } catch (error) {
+      return ErrorResponse(error);
+    }
+  }
+
+  @Post('/recharge')
+  async rechargeWallet(
+    @Body() rechargeDto: RechargeDto,
+  ): Promise<ResponseData<any>> {
+    try {
+      const result = await this.transactionService.rechargeToWallet(
+        rechargeDto.address,
+        rechargeDto.amount,
+      );
+      return new ResponseData(result, HttpStatus.SUCCESS, 'OK', null);
+    } catch (error) {
+      return ErrorResponse(error);
+    }
+  }
+
+  @Post('/mine')
+  async buyMCFromSystem(
+    @Body() buyMCFromSystemDto: BuyMCFromSystemDto,
+  ): Promise<ResponseData<any>> {
+    try {
+      const result = await this.transactionService.buyMCFromSystem(
+        buyMCFromSystemDto.address,
+        buyMCFromSystemDto.amount,
+      );
+      return new ResponseData(result, HttpStatus.SUCCESS, 'OK', null);
     } catch (error) {
       return ErrorResponse(error);
     }

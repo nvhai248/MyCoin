@@ -12,14 +12,6 @@ import {
 export class WalletService {
   constructor(@InjectModel(Wallet.name) private walletModel: Model<Wallet>) {}
 
-  getNoti(): string {
-    try {
-      return 'wallet';
-    } catch (error) {
-      throw error;
-    }
-  }
-
   async createNewWallet(password: string): Promise<Wallet> {
     try {
       const { address, keystoreFilePath, privateKey } =
@@ -31,7 +23,7 @@ export class WalletService {
         keystoreFilePath: keystoreFilePath,
         privateKey: privateKey,
         amountMC: 0,
-        amountUSD: 10000,
+        amountUSD: 0,
       });
 
       return result;

@@ -9,20 +9,6 @@ import { ErrorResponse } from 'src/utils/errorHandle';
 export class WalletController {
   constructor(private readonly walletService: WalletService) {}
 
-  @Get()
-  getNoti(): ResponseData<string> {
-    try {
-      return new ResponseData(
-        this.walletService.getNoti(),
-        HttpStatus.SUCCESS,
-        'OK',
-        null,
-      );
-    } catch (error) {
-      return ErrorResponse(error);
-    }
-  }
-
   @Post()
   async createWallet(
     @Body() createWallet: CreateWallet,
