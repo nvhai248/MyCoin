@@ -53,4 +53,14 @@ export class WalletService {
       throw error;
     }
   }
+
+  async getInformationWallet(address: string): Promise<Wallet> {
+    try {
+      const result = await this.walletModel.findOne({ address: address });
+
+      return result;
+    } catch (error) {
+      throw error;
+    }
+  }
 }

@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Query } from '@nestjs/common';
 import { WalletService } from './wallet.service';
 import { ResponseData } from 'src/global/globalClass';
 import { HttpStatus } from 'src/global/globalEnum';
@@ -32,6 +32,18 @@ export class WalletController {
         accessWallet.password,
         accessWallet.keystoreFileContent,
       );
+      return new ResponseData(result, HttpStatus.SUCCESS, 'OK', null);
+    } catch (error) {
+      return ErrorResponse(error);
+    }
+  }
+
+  @Get('/:address')
+  async getWallet(
+    @Param('address') address: string,
+  ): Promise<ResponseData<any>> {
+    try {
+      const result = await this.walletService.getInformationWallet(address);
       return new ResponseData(result, HttpStatus.SUCCESS, 'OK', null);
     } catch (error) {
       return ErrorResponse(error);
