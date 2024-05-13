@@ -43,7 +43,7 @@ export class TransactionService {
       }
 
       const timeStamp = new Date();
-      const data = { from: from, to: to, amount: amount };
+      const data = { from: from, to: to, amount: amount - 2, fee: 2 };
       const hash = CalculateHash(latestBlock.toObject().hash, data, timeStamp);
 
       // reduce the amount in from wallet
@@ -54,7 +54,7 @@ export class TransactionService {
       // increment the amount in to wallet
       await this.walletModel.updateOne(
         { address: to },
-        { $inc: { amountMC: amount } },
+        { $inc: { amountMC: amount - 2 } },
       );
 
       const result = await this.transactionModel.create({
@@ -116,6 +116,7 @@ export class TransactionService {
         from: 'system',
         to: address,
         amount: amount * 10,
+        fee: 0,
       };
       const timeStamp = new Date();
 

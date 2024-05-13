@@ -20,6 +20,7 @@ export class Transaction extends Document {
     from: string;
     to: string;
     amount: number;
+    fee: number;
   };
 }
 
