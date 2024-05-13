@@ -1,11 +1,10 @@
-import { Controller, Get, Body, Post } from '@nestjs/common';
+import { Controller, Get, Body, Post, Query } from '@nestjs/common';
 import { TransactionService } from './transaction.service';
 import { ResponseData } from 'src/global/globalClass';
 import { HttpStatus } from 'src/global/globalEnum';
 import { ErrorResponse } from 'src/utils/errorHandle';
 import {
   BuyMCFromSystemDto,
-  HistoryDto,
   RechargeDto,
   TransactionCreateDto,
 } from 'src/dto/transaction.dto';
@@ -15,11 +14,11 @@ export class TransactionController {
   constructor(private readonly transactionService: TransactionService) {}
 
   @Get()
-  async getHistory(@Body() getHistory: HistoryDto): Promise<ResponseData<any>> {
+  async getHistory(
+    @Query('address') address: string,
+  ): Promise<ResponseData<any>> {
     try {
-      const result = await this.transactionService.getHistory(
-        getHistory.address,
-      );
+      const result = await this.transactionService.getHistory(address);
       return new ResponseData(result, HttpStatus.SUCCESS, 'OK', null);
     } catch (error) {
       return ErrorResponse(error);
