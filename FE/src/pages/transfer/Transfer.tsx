@@ -10,20 +10,46 @@ import {
   Select,
   notification,
 } from "antd";
+import { useAuth } from "../../provider/authContext";
+import axiosInstance from "../../configs/axios.config";
 
 const { Option } = Select;
 
 const TransferPage: React.FC = () => {
-  const walletAddress = "wallet address";
+  const { getWalletAddress } = useAuth();
+  const walletAddress = getWalletAddress();
   const currencyOptions = ["MC"];
   const transactionFee = 2;
 
-  const handleTransfer = (values: any) => {
-    notification.success({
-      message: "Transfer OK!",
-      description: "Transfer ok",
-    });
-    console.log("Transfer values:", values);
+  const handleTransfer = async (values: any) => {
+    try {
+      const bodyRequest = {
+        from: walletAddress,
+        to: values.to,
+        amount: values.amount,
+      };
+
+      let result = await axiosInstance.post("/transactions", bodyRequest);
+
+      if (result.data.statusCode !== 200) {
+        notification.error({
+          message: "Failed to Tranfer",
+          description: "Not found destination address",
+        });
+
+        return;
+      }
+
+      notification.success({
+        message: "Tranfer Successfully",
+      });
+    } catch (error) {
+      notification.error({
+        message: "Failed to Tranfer",
+        description: "Not found destination address",
+      });
+      console.log(error);
+    }
   };
 
   return (
@@ -42,8 +68,8 @@ const TransferPage: React.FC = () => {
             <Form.Item label="From" name="from">
               <Input
                 disabled
-                value={walletAddress}
-                placeholder={walletAddress}
+                value={walletAddress ? walletAddress : "walletAdress"}
+                placeholder={walletAddress ? walletAddress : "walletAdress"}
               />
             </Form.Item>
           </Col>

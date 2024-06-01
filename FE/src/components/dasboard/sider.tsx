@@ -8,6 +8,7 @@ import { MdDashboard } from "react-icons/md";
 import { FaMoneyBillTransfer } from "react-icons/fa6";
 import { useNavigate } from "react-router-dom";
 import { useLocation } from "react-router-dom";
+import { useAuth } from "../../provider/authContext";
 
 const { Sider } = Layout;
 
@@ -37,6 +38,8 @@ const items = [
 const SiderDashboard: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
+
+  const { signOut } = useAuth();
 
   const setDefaultKey = () => {
     const { pathname } = location;
@@ -76,6 +79,11 @@ const SiderDashboard: React.FC = () => {
     }
   };
 
+  const handleSignOut = () => {
+    signOut();
+    navigate("/");
+  };
+
   return (
     <Sider
       breakpoint="lg"
@@ -113,9 +121,7 @@ const SiderDashboard: React.FC = () => {
           Setting
         </Menu.Item>
         <Menu.Item
-          onClick={() => {
-            navigate("/");
-          }}
+          onClick={handleSignOut}
           style={{ height: "3rem" }}
           icon={<TbLogout2 />}
         >

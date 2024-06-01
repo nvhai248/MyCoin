@@ -1,18 +1,12 @@
 // authContext.tsx
 import React, { createContext, useContext, ReactNode } from "react";
-
-interface Wallet {
-  address: string;
-  privateKey: string;
-  amountUSD: number;
-  amountMC: number;
-  createdAt: string;
-}
+import { Wallet } from "../types/wallet";
 
 interface AuthContextProps {
-  wallet: Wallet | null;
-  setWallet: (wallet: Wallet | null) => void;
+  getWalletAddress: () => string | null;
   isAuthenticated: () => boolean;
+  signIn: (wallet: Wallet | null) => void;
+  signOut: () => void;
 }
 
 const AuthContext = createContext<AuthContextProps | undefined>(undefined);
@@ -20,14 +14,39 @@ const AuthContext = createContext<AuthContextProps | undefined>(undefined);
 export const AuthProvider: React.FC<{ children: ReactNode }> = ({
   children,
 }) => {
-  const [wallet, setWallet] = React.useState<Wallet | null>(null);
+  const getWalletAddress = (): string | null => {
+    const walletData = localStorage.getItem("walletAddress");
+    console.log("walletData", walletData);
+    if (walletData) {
+      return walletData;
+    }
+    return null;
+  };
 
   const isAuthenticated = (): boolean => {
-    return !!wallet;
+    const walletData = localStorage.getItem("walletAddress");
+    if (walletData) {
+      return true;
+    }
+    return false;
+  };
+
+  const signIn = (newWallet: Wallet | null) => {
+    if (newWallet) {
+      localStorage.setItem("walletAddress", newWallet.address);
+    } else {
+      localStorage.removeItem("walletAddress");
+    }
+  };
+
+  const signOut = () => {
+    localStorage.removeItem("walletAddress");
   };
 
   return (
-    <AuthContext.Provider value={{ wallet, setWallet, isAuthenticated }}>
+    <AuthContext.Provider
+      value={{ getWalletAddress, isAuthenticated, signIn, signOut }}
+    >
       {children}
     </AuthContext.Provider>
   );

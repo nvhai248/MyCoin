@@ -8,7 +8,7 @@ import axiosInstance from "../../configs/axios.config";
 import { useAuth } from "../../provider/authContext";
 const CreateByKeystorePage: React.FC = () => {
   const { token } = theme.useToken();
-  const { setWallet } = useAuth();
+  const { signIn } = useAuth();
   const navigate = useNavigate();
   const [current, setCurrent] = useState(0);
   const [disabledNext, setDisabledNext] = useState<boolean>(true);
@@ -43,7 +43,7 @@ const CreateByKeystorePage: React.FC = () => {
         return;
       }
 
-      setWallet(result.data.data);
+      signIn(result.data.data);
       navigate("/dashboard");
     } catch (error) {
       notification.error({

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { DownOutlined } from "@ant-design/icons";
 import type { MenuProps } from "antd";
 import { Dropdown, Space, Button, Row, Col, notification } from "antd";
@@ -6,64 +6,113 @@ import { LuRefreshCcw } from "react-icons/lu";
 import { CopyOutlined } from "@ant-design/icons";
 import { IoIosPrint } from "react-icons/io";
 import { BiLogOut } from "react-icons/bi";
+import { useAuth } from "../../provider/authContext";
+import axiosInstance from "../../configs/axios.config";
+import { Wallet } from "../../types/wallet";
+import { useNavigate } from "react-router-dom";
 
 const iconStyle: React.CSSProperties = {
   fontSize: "15px",
   marginRight: "10px",
 };
 
-const items: MenuProps["items"] = [
-  {
-    label: (
-      <a>
-        <LuRefreshCcw style={iconStyle} /> Refresh Balance
-      </a>
-    ),
-    key: "0",
-  },
-  {
-    label: (
-      <a>
-        <IoIosPrint style={iconStyle} /> View paper wallet
-      </a>
-    ),
-    key: "1",
-  },
-  {
-    type: "divider",
-  },
-  {
-    label: (
-      <a>
-        <BiLogOut style={iconStyle} /> Sign out
-      </a>
-    ),
-    key: "3",
-  },
-];
 const AvatarDashboard: React.FC = () => {
+  const navigate = useNavigate();
+
   const [copied, setCopied] = useState(false);
-  const addressWallet = "asdasfasfasfasd";
+  const [wallet, setWallet] = useState<Wallet | null>(null);
+
+  const { getWalletAddress, signOut } = useAuth();
+  const walletAddress = getWalletAddress();
+
+  const fetchWallet = async () => {
+    try {
+      let result = await axiosInstance.get(`/wallets/${walletAddress}`);
+
+      if (result.data.statusCode !== 200) {
+        notification.error({
+          message: "Failed to get Wallet",
+          description: "Unknown Address",
+        });
+
+        return;
+      }
+
+      console.log("result.data", result.data.data);
+      setWallet(result.data.data);
+    } catch (error) {
+      notification.error({
+        message: "Failed to get Wallet",
+        description: "Unknown Address",
+      });
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    fetchWallet();
+  }, []);
 
   const handleCopyText = () => {
-    navigator.clipboard.writeText(addressWallet);
-    setCopied(true);
+    if (wallet) {
+      navigator.clipboard.writeText(wallet.address);
 
-    setTimeout(() => {
-      setCopied(false);
-    }, 3000);
+      setCopied(true);
 
-    notification.success({
-      message: "Address Copied",
-      description: `Address "${addressWallet}" has been copied to clipboard.`,
-    });
+      setTimeout(() => {
+        setCopied(false);
+      }, 3000);
+
+      notification.success({
+        message: "Address Copied",
+        description: `Address "${formatAddress(
+          wallet?.address
+        )}" has been copied to clipboard.`,
+      });
+    }
   };
 
   const formatAddress = (address: string) => {
+    console.log("address: ", address);
     const firstChars = address.slice(0, 6);
     const lastChars = address.slice(-4);
     return `${firstChars}...${lastChars}`;
   };
+
+  const handleSignOut = () => {
+    signOut();
+    navigate("/");
+  };
+
+  const items: MenuProps["items"] = [
+    {
+      label: (
+        <a onClick={fetchWallet}>
+          <LuRefreshCcw style={iconStyle} /> Refresh Balance
+        </a>
+      ),
+      key: "0",
+    },
+    {
+      label: (
+        <a>
+          <IoIosPrint style={iconStyle} /> View paper wallet
+        </a>
+      ),
+      key: "1",
+    },
+    {
+      type: "divider",
+    },
+    {
+      label: (
+        <a onClick={handleSignOut}>
+          <BiLogOut style={iconStyle} /> Sign out
+        </a>
+      ),
+      key: "3",
+    },
+  ];
 
   return (
     <div style={{ height: "12rem" }} className="avatar-nav">
@@ -90,13 +139,13 @@ const AvatarDashboard: React.FC = () => {
             cursor: "pointer",
           }}
         >
-          {formatAddress(addressWallet)}
+          {wallet && formatAddress(wallet.address)}
         </p>
       </Row>
       <Row>
         <h1 style={{ fontSize: "2.5rem", color: "white", marginLeft: "5px" }}>
-          $0.00
-        </h1>{" "}
+          {wallet ? "$" + wallet.amountUSD : "$0.00"}
+        </h1>
       </Row>
       <Row>
         <Col span={20}>
@@ -109,7 +158,7 @@ const AvatarDashboard: React.FC = () => {
               fontWeight: "normal",
             }}
           >
-            0 MC
+            {wallet ? wallet.amountMC + "MC" : "0 MC"}
           </h2>{" "}
         </Col>
         <Col span={4}>
